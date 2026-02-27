@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastel Skeuomorphic Hesap Makinesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Yumuşak Pastel Mavi-Gri Paleti */
+            --bg-color: #f1f5f9; /* Slate 50 - Çok açık pastel zemin */
+            --main-shadow: rgba(148, 163, 184, 0.35); /* Yumuşak gölge */
+            --light-shadow: rgba(255, 255, 255, 1); /* Parlak vurgu */
+            --display-bg: #ffffff; 
+            --text-main: #475569; /* Slate 600 - Yumuşak koyu gri yazı */
+            --border-accent: #cbd5e1; /* Belirgin pastel kenarlık */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent !important; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Ana Gövde - Pastel Plastik Dokusu */
+        .calculator-body {
+            background-color: var(--bg-color);
+            padding: 2.5rem 1.5rem;
+            border-radius: 3rem;
+            width: 360px;
+            /* Neumorphic kabartma etkisi */
+            box-shadow: 
+                15px 15px 35px var(--main-shadow),
+                -15px -15px 35px var(--light-shadow);
+            border: 2px solid var(--border-accent);
+            position: relative;
+        }
+
+        /* Ekran - Gömülü Panel */
+        .screen-container {
+            background-color: var(--display-bg);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            text-align: right;
+            box-shadow: 
+                inset 5px 5px 12px rgba(148, 163, 184, 0.2), 
+                inset -5px -5px 12px var(--light-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        #prev-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            min-height: 1.2rem;
+        }
+
+        #current-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.8rem;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            overflow: hidden;
+            line-height: 1;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        /* Realistik Pastel Tuş Tasarımı */
+        .btn {
+            aspect-ratio: 1/1;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+            background: var(--bg-color);
+            box-shadow: 
+                6px 6px 15px var(--main-shadow),
+                -6px -6px 15px var(--light-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: var(--text-main);
+            position: relative;
+        }
+
+        /* Tuşa Basılma Efekti (İçe Çökme) */
+        .btn:active {
+            box-shadow: 
+                inset 4px 4px 10px var(--main-shadow),
+                inset -4px -4px 10px var(--light-shadow);
+            transform: scale(0.97);
+        }
+
+        /* Operatörler - Pastel Mavi */
+        .btn-op {
+            color: #60a5fa; 
+        }
+
+        /* Fonksiyonlar - Pastel Kırmızı/Gül */
+        .btn-func {
+            color: #f87171;
+        }
+
+        /* Eşittir Tuşu - Pastel Gradyan */
+        .btn-equal {
+            background: linear-gradient(145deg, #93c5fd, #60a5fa);
+            color: white;
+            box-shadow: 
+                5px 5px 15px rgba(96, 165, 250, 0.4),
+                -5px -5px 12px var(--light-shadow);
+            border: none;
+        }
+
+        .btn-equal:active {
+            background: #3b82f6;
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.15);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="calculator-body">
+        <div class="screen-container">
+            <div id="prev-val"></div>
+            <div id="current-val">0</div>
+        </div>
+
+        <div class="buttons-grid">
+            <div class="btn btn-func" onclick="handleAction('AC')">AC</div>
+            <div class="btn btn-func" onclick="handleAction('DEL')">⌫</div>
+            <div class="btn btn-op" onclick="handleAction('√')">√</div>
+            <div class="btn btn-op" onclick="handleOperator('/')">÷</div>
+
+            <div class="btn" onclick="appendNumber('7')">7</div>
+            <div class="btn" onclick="appendNumber('8')">8</div>
+            <div class="btn" onclick="appendNumber('9')">9</div>
+            <div class="btn btn-op" onclick="handleOperator('*')">×</div>
+
+            <div class="btn" onclick="appendNumber('4')">4</div>
+            <div class="btn" onclick="appendNumber('5')">5</div>
+            <div class="btn" onclick="appendNumber('6')">6</div>
+            <div class="btn btn-op" onclick="handleOperator('-')">−</div>
+
+            <div class="btn" onclick="appendNumber('1')">1</div>
+            <div class="btn" onclick="appendNumber('2')">2</div>
+            <div class="btn" onclick="appendNumber('3')">3</div>
+            <div class="btn btn-op" onclick="handleOperator('+')">+</div>
+
+            <div class="btn btn-op" onclick="handleAction('%')">%</div>
+            <div class="btn" onclick="appendNumber('0')">0</div>
+            <div class="btn" onclick="appendNumber('.')">.</div>
+            <div class="btn btn-equal" onclick="calculate()">=</div>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let previousInput = '';
+        let operator = null;
+        let shouldResetScreen = false;
+
+        const currentDisplay = document.getElementById('current-val');
+        const prevDisplay = document.getElementById('prev-val');
+
+        function updateDisplay() {
+            let displayVal = currentInput;
+            if (displayVal.length > 10) {
+                displayVal = parseFloat(displayVal).toPrecision(7);
+            }
+            currentDisplay.innerText = formatNumber(displayVal);
+            
+            if (operator) {
+                prevDisplay.innerText = `${formatNumber(previousInput)} ${getOperatorSymbol(operator)}`;
+            } else {
+                prevDisplay.innerText = '';
+            }
+        }
+
+        function formatNumber(num) {
+            if (num === 'Hata') return 'Hata';
+            const str = num.toString();
+            const parts = str.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join('.');
+        }
+
+        function getOperatorSymbol(op) {
+            switch(op) {
+                case '/': return '÷';
+                case '*': return '×';
+                case '-': return '−';
+                case '+': return '+';
+                default: return op;
+            }
+        }
+
+        function appendNumber(number) {
+            if (currentInput === '0' || shouldResetScreen) {
+                currentInput = number === '.' ? '0.' : number;
+                shouldResetScreen = false;
+            } else {
+                if (number === '.' && currentInput.includes('.')) return;
+                if (currentInput.length > 12) return;
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function handleOperator(op) {
+            if (operator !== null && !shouldResetScreen) calculate();
+            previousInput = currentInput;
+            operator = op;
+            shouldResetScreen = true;
+            updateDisplay();
+        }
+
+        function handleAction(action) {
+            switch(action) {
+                case 'AC':
+                    currentInput = '0';
+                    previousInput = '';
+                    operator = null;
+                    updateDisplay();
+                    break;
+                case 'DEL':
+                    if (shouldResetScreen) {
+                        currentInput = '0';
+                        shouldResetScreen = false;
+                    } else if (currentInput.length > 1) {
+                        currentInput = currentInput.slice(0, -1);
+                    } else {
+                        currentInput = '0';
+                    }
+                    updateDisplay();
+                    break;
+                case '√':
+                    const val = parseFloat(currentInput);
+                    if (val < 0) {
+                        currentInput = 'Hata';
+                    } else {
+                        currentInput = Math.sqrt(val).toString();
+                    }
+                    shouldResetScreen = true;
+                    updateDisplay();
+                    break;
+                case '%':
+                    currentInput = (parseFloat(currentInput) / 100).toString();
+                    shouldResetScreen = true;
+                    updateDisplay();
+                    break;
+            }
+        }
+
+        function calculate() {
+            if (operator === null || shouldResetScreen) return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            switch(operator) {
+                case '/': result = current === 0 ? 'Hata' : prev / current; break;
+                case '*': result = prev * current; break;
+                case '-': result = prev - current; break;
+                case '+': result = prev + current; break;
+                default: return;
+            }
+
+            currentInput = result.toString();
+            operator = null;
+            previousInput = '';
+            shouldResetScreen = true;
+            updateDisplay();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
+            if (e.key === '.') appendNumber('.');
+            if (e.key === '=' || e.key === 'Enter') calculate();
+            if (e.key === 'Backspace') handleAction('DEL');
+            if (e.key === 'Escape') handleAction('AC');
+            if (e.key === '+') handleOperator('+');
+            if (e.key === '-') handleOperator('-');
+            if (e.key === '*') handleOperator('*');
+            if (e.key === '/') handleOperator('/');
+        });
+    </script>
+</body>
+</html>
